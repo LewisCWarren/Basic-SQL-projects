@@ -325,7 +325,7 @@ from Borrower person
 inner join BookLoans loan on loan.CardNo = person.CardNO
 inner join books on books.BookID = loan.BookID
 inner join library_Branch branch on branch.branchID = loan.branchID
-where loan.DateDue = '12-27-2019' and Branch.branchName = 'Sharpstown'
+where loan.DateDue = '2019-12-27' and Branch.branchName = 'Sharpstown'
 
 exec dbo.DueTodaySharpstown
 
