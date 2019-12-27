@@ -318,59 +318,68 @@ select * from Books
 
 
 /*QUERY 4*/
-create procedure dbo.DueToday
+create procedure dbo.DueTodaySharpstown
 as
-select person.name, person.Address, books.Title
+select person.name, person.Address, books.Title, branch.branchName
 from Borrower person
 inner join BookLoans loan on loan.CardNo = person.CardNO
 inner join books on books.BookID = loan.BookID
-where loan.DateDue = '12-20-2019'
+inner join library_Branch branch on branch.branchID = loan.branchID
+where loan.DateDue = '12-27-2019' and Branch.branchName = 'Sharpstown'
 
-exec dbo.DueToday
+exec dbo.DueTodaySharpstown
 
 
 select * from BookLoans
 
 /*QUERY 5*/
 
-create procedure dbo.BooksOut @branch varchar(30) = null
+create procedure dbo.BooksOutFromBranch
 as
-select branch.branchName, Loan.BookID
-from library_Branch branch
-inner join BookLoans loan on loan.branchID = branch.branchID 
-where branch.branchName = isnull(@branch, branch.branchName)
+select count(BookLoans.BookID), library_Branch.branchName
+from BookLoans
+inner join library_Branch on library_Branch.branchID = BookLoans.branchID
+group by library_Branch.branchID, library_Branch.branchName
 
-exec dbo.BooksOut @branch = 'Central'
+
+exec dbo.BooksOutFromBranch
 
 
 select * from borrower
 select * from BookLoans
 select * from books
+select * from library_Branch
 
 
 /*QUERY 6*/
-create procedure dbo.ManyBooksOut
+select * from Borrower
+select * from BookLoans
+
+create procedure dbo.howManyBooks
 as 
-select person.Name, person.Address, loan.bookID
-from Borrower person 
-inner join BookLoans loan on loan.CardNo = person.CardNO
-where person.CardNO > 5
+select person.Name, person.Address, count(loan.bookID) as BooksOut
+from BookLoans loan
+inner join Borrower person on loan.CardNo = person.CardNO
+group by person.Name, person.Address
+having count(loan.BookID) > 5
 
-
-exec dbo.ManyBooksOut
+exec dbo.HowManyBooks
 
 /*QUERY 7*/
 select * from books
 select * from BookCopies
 select * from library_Branch
 
-create procedure dbo.StephenKing 
+create procedure dbo.StephenKingBooks
 as
-select BookAuthors.AuthorName, copies.NumberOfCopies, library_Branch.branchName
+select BookAuthors.AuthorName, copies.NumberOfCopies, library_Branch.branchName, Books.Title
 from BookAuthors
 inner join BookCopies copies on copies.BookID = BookAuthors.BookID
 inner join library_Branch on copies.BranchID = library_Branch.branchID
+inner join books on Books.bookId = BookAuthors.BookID
 where library_Branch.branchName = 'Central'
 and BookAuthors.AuthorName = 'Stephen King'
+
+exec dbo.StephenKingBooks
 
 

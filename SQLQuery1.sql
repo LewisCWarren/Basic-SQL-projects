@@ -158,6 +158,8 @@ create table tbl_species (
 	
 );
 
+select * from tbl_species;
+
 
 
 INSERT INTO tbl_species
